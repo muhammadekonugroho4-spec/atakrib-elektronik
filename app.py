@@ -1,124 +1,78 @@
 import streamlit as st
 
-# 1. Konfigurasi Halaman (Lebar penuh / Wide)
-st.set_page_config(page_title="Katalog Atakrib", layout="wide")
+# Konfigurasi Halaman
+st.set_page_config(page_title="Detail Produk - Atakrib", layout="wide")
 
-# 2. Menyembunyikan menu bawaan Streamlit agar terlihat seperti web asli
-hide_st_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_st_style, unsafe_allow_html=True)
-
-# 3. Header & Kolom Pencarian (Meniru bagian atas Inaproc)
-st.markdown("### ⚡ Katalog Elektronik Atakrib")
-cari = st.text_input("🔍 Cari produk & penyedia di sini...", placeholder="Ketik nama barang...")
-
-# 4. Banner (Menggunakan gambar placeholder sebagai contoh)
-st.image("https://images.unsplash.com/photo-1550009158-9a4f6f466bba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80", use_container_width=True)
-
-st.markdown("#### Produk Pilihan & Terlaris di Jogja")
-st.write("") # Spasi kosong
-
-# 5. Data Produk (Menggunakan gambar URL asli agar terlihat nyata)
-produk = [
-    {
-        "nama": "Kulkas 2 Pintu LG Smart Inverter",
-        "harga": "Rp 3.850.000,00",
-        "label": "Barang",
-        "lokasi": "KOTA YOGYAKARTA",
-        "terjual": 12,
-        "gambar": "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+# 1. Menyiapkan Data 1 Barang Secara Tuntas
+produk = {
+    "nama": "COOCAA LED 32 32S3U Digital Smart TV Coolita 2.0",
+    "harga": "Rp Rp2.069.000",
+    "kategori": "Tv",
+    "status": "Tersedia (Siap Kirim area Jogja)",
+    "deskripsi": "Coocaa 32 inch Digital Smart TV (Model : Coocaa 32S3U) merupakan Smart TV berukuran 32 Inch yang cocok digunakan untuk menonton di rumah Anda. Bingkai televisi ini didesain dengan bentuk sederhana yang elegan dan sangat sesuai untuk berbagai jenis interior rumah Anda. Anda dapat memanfaatkan koneksi antarmuka menggunakan Opera TV yang praktis untuk menonton film dan main games melalui televisi Anda. Dan juga Anda dapat mirroring TV Anda dengan Smartphone Anda. Dengan warna TV yang jernih, dan dukungan dari Dolby Digital dan DTS juga memberikan Anda keleluasaan untuk dapat menikmati kualitas audio yang lebih tangguh.",
+    "spesifikasi": {
+        "Kapasitas": "205 Liter",
+        "Daya Listrik": "70 Watt",
+        "Dimensi": "555 x 1400 x 585 mm",
+        "Garansi": "10 Tahun Kompresor"
     },
-    {
-        "nama": "AC Daikin Standard 1 PK",
-        "harga": "Rp 4.100.000,00",
-        "label": "Barang",
-        "lokasi": "KOTA YOGYAKARTA",
-        "terjual": 8,
-        "gambar": "https://images.unsplash.com/photo-1618220179428-22790b46a0eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-    },
-    {
-        "nama": "Mesin Cuci Samsung Top Load 9kg",
-        "harga": "Rp 2.950.000,00",
-        "label": "Pre Order",
-        "lokasi": "KAB. SLEMAN",
-        "terjual": 0,
-        "gambar": "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-    },
-    {
-        "nama": "Smart TV Samsung 43 Inch 4K UHD",
-        "harga": "Rp 4.500.000,00",
-        "label": "Barang",
-        "lokasi": "KOTA YOGYAKARTA",
-        "terjual": 25,
-        "gambar": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-    },
-    {
-        "nama": "Microwave Sharp 20 Liter",
-        "harga": "Rp 950.000,00",
-        "label": "Barang",
-        "lokasi": "KOTA BANTUL",
-        "terjual": 5,
-        "gambar": "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-    }
-]
+    # Link gambar dari internet (bisa diganti dengan foto asli nanti)
+    "gambar_url": "https://down-id.img.susercontent.com/file/id-11134207-7r98y-llxawguy4sg706.webp",
+    # Link video YouTube (contoh video review kulkas LG)
+    "video_url": "https://youtu.be/U5b_lKQ8Y0g" 
+}
 
-# 6. Membuat Layout Grid (5 Kolom seperti Inaproc)
-cols = st.columns(5)
+st.markdown("### ⚡ Detail Produk Atakrib")
+st.divider()
 
-# 7. Menyisipkan HTML & CSS untuk membuat Kartu (Card) yang rapi
-for i, p in enumerate(produk):
-    with cols[i % 5]:
-        # Desain Card HTML
-        card_html = f"""
-        <div style="
-            border: 1px solid #e0e0e0; 
-            border-radius: 8px; 
-            padding: 15px; 
-            background-color: white; 
-            height: 380px; 
-            display: flex; 
-            flex-direction: column;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: 0.3s;
-        ">
-            <!-- Label -->
-            <div style="margin-bottom: 10px;">
-                <span style="background-color: #e3f2fd; color: #1976d2; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 11px;">
-                    {p['label']}
-                </span>
-            </div>
-            
-            <!-- Area Gambar -->
-            <div style="height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 15px;">
-                <img src="{p['gambar']}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
-            </div>
-            
-            <!-- Judul Produk -->
-            <div style="font-weight: 600; font-size: 14px; line-height: 1.3; color: #333; margin-bottom: 10px; flex-grow: 1;">
-                {p['nama']}
-            </div>
-            
-            <!-- Harga -->
-            <div style="font-weight: 800; font-size: 16px; color: #2c3e50; margin-bottom: 10px;">
-                {p['harga']}
-            </div>
-            
-            <!-- Info Lokasi & Terjual -->
-            <div style="font-size: 11px; color: #7f8c8d; border-top: 1px solid #eee; padding-top: 8px;">
-                📍 {p['lokasi']}<br>
-                Terjual {p['terjual']}
-            </div>
-        </div>
-        <br>
-        """
-        # Menampilkan Card
-        st.markdown(card_html, unsafe_allow_html=True)
+# 2. Membagi Layar Menjadi 2 Kolom (Kiri: Media, Kanan: Info)
+col1, col2 = st.columns([1.2, 1])
+
+# --- KOLOM KIRI (Untuk Gambar dan Video) ---
+with col1:
+    # Menampilkan Gambar Produk
+    st.image(produk["gambar_url"], use_container_width=True, caption="Foto Representasi Produk")
+    
+    st.write("") # Spasi kosong
+    
+    # Menampilkan Video dari YouTube
+    st.markdown("#### 🎥 Video Review / Tampilan Asli")
+    st.video(produk["video_url"])
+
+# --- KOLOM KANAN (Untuk Detail, Spesifikasi & Aksi) ---
+with col2:
+    # Nama dan Harga
+    st.subheader(produk["nama"])
+    st.markdown(f"<h2 style='color: #d35400;'>{produk['harga']}</h2>", unsafe_allow_html=True)
+    
+    # Status Barang
+    st.info(f"📦 **Status:** {produk['status']}")
+    
+    # Deskripsi Produk
+    st.markdown("#### Deskripsi")
+    st.write(produk["deskripsi"])
+    
+    # Spesifikasi (Dibuat menjadi list)
+    st.markdown("#### Spesifikasi Teknis")
+    for kunci, nilai in produk["spesifikasi"].items():
+        st.write(f"- **{kunci}:** {nilai}")
         
-        # Tombol interaktif (Streamlit native) di bawah setiap card
-        if st.button("Lihat Detail", key=f"btn_{i}", use_container_width=True):
-            st.success(f"Masuk ke halaman detail {p['nama']}")
+    st.write("") # Spasi kosong
+    st.write("") # Spasi kosong
+    
+    # Tombol Aksi WhatsApp dengan Desain CSS
+    no_wa = "6281234567890" # Ganti dengan nomor Anda
+    pesan = f"Halo, saya ingin bertanya tentang {produk['nama']} seharga {produk['harga']} yang ada di katalog web."
+    link_wa = f"https://wa.me/{no_wa}?text={pesan.replace(' ', '%20')}"
+    
+    tombol_wa_html = f"""
+    <a href="{link_wa}" target="_blank" style="text-decoration: none;">
+        <div style="background-color: #25D366; color: white; padding: 15px; text-align: center; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s;">
+            💬 Pesan / Tanya via WhatsApp
+        </div>
+    </a>
+    """
+    st.markdown(tombol_wa_html, unsafe_allow_html=True)
+
+st.divider()
+st.caption("© 2026 Atakrib Elektronik Jogja")
