@@ -1,66 +1,247 @@
 import streamlit as st
 
-# 1. Konfigurasi Halaman (Lebar penuh agar mirip web portal profesional)
-st.set_page_config(
-    page_title="Katalog Elektronik Atakrib Jogja", 
-    page_icon="⚡", 
-    layout="wide"
-)
+# 1. Konfigurasi Halaman (Lebar penuh / Wide)
+st.set_page_config(page_title="Katalog Atakrib", layout="wide")
 
-# 2. Header & Banner Sederhana
-st.title("⚡ Katalog Resmi Atakrib Elektronik Jogja")
-st.markdown("Direktori produk elektronik pilihan terbaik, transparan, dan terpercaya di Yogyakarta.")
-st.markdown("---")
+# 2. Menyembunyikan menu bawaan Streamlit agar terlihat seperti web asli
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
-# 3. Sidebar untuk Filter & Pencarian Utama
-st.sidebar.header("🔍 Filter Katalog")
-keyword = st.sidebar.text_input("Cari nama produk...")
-kategori_pilih = st.sidebar.selectbox("Pilih Kategori:", ["Semua", "AC", "Mesin Cuci", "Televisi", "Kulkas"])
+# 3. Header & Kolom Pencarian (Meniru bagian atas Inaproc)
+st.markdown("### ⚡ Katalog Elektronik Atakrib")
+cari = st.text_input("🔍 Cari produk & penyedia di sini...", placeholder="Ketik nama barang...")
 
-# 4. Database Contoh Produk (Nanti bisa ditambah banyak)
-produk_list = [
-    {"nama": "Smart TV 43 Inch Android", "kategori": "Televisi", "harga": "Rp 3.500.000", "deskripsi": "Resolusi 4K tajam, suara jernih, garansi resmi.", "gambar": "📺"},
-    {"nama": "Mesin Cuci 2 Tabung 8kg", "kategori": "Mesin Cuci", "harga": "Rp 1.800.000", "deskripsi": "Hemat listrik, tabung besar anti karat, awet.", "gambar": "🌀"},
-    {"nama": "AC Standard 1/2 PK", "kategori": "AC", "harga": "Rp 2.900.000", "deskripsi": "Dingin cepat, freon ramah lingkungan, cocok untuk kamar.", "gambar": "❄️"},
-    {"nama": "Kulkas 2 Pintu Inverter", "kategori": "Kulkas", "harga": "Rp 3.800.000", "deskripsi": "Hemat energi, bebas bunga es (no frost), kapasitas luas.", "gambar": "🧊"},
-    {"nama": "Smart TV 32 Inch", "kategori": "Televisi", "harga": "Rp 2.100.000", "deskripsi": "HD Ready, built-in YouTube & Netflix, hemat daya.", "gambar": "📺"},
-    {"nama": "Mesin Cuci Front Loading 7kg", "kategori": "Mesin Cuci", "harga": "Rp 4.500.000", "deskripsi": "Pencucian dengan air panas,, pakaian lebih terjaga.", "gambar": "🌀"}
+# 4. Banner (Menggunakan gambar placeholder sebagai contoh)
+st.image("https://images.unsplash.com/photo-1550009158-9a4f6f466bba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80", use_column_width=True)
+
+st.markdown("#### Produk Pilihan & Terlaris di Jogja")
+st.write("") # Spasi kosong
+
+# 5. Data Produk (Menggunakan gambar URL asli agar terlihat nyata)
+produk = [
+    {
+        "nama": "Kulkas 2 Pintu LG Smart Inverter",
+        "harga": "Rp 3.850.000,00",
+        "label": "Barang",
+        "lokasi": "KOTA YOGYAKARTA",
+        "terjual": 12,
+        "gambar": "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+        "nama": "AC Daikin Standard 1 PK",
+        "harga": "Rp 4.100.000,00",
+        "label": "Barang",
+        "lokasi": "KOTA YOGYAKARTA",
+        "terjual": 8,
+        "gambar": "https://images.unsplash.com/photo-1618220179428-22790b46a0eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+        "nama": "Mesin Cuci Samsung Top Load 9kg",
+        "harga": "Rp 2.950.000,00",
+        "label": "Pre Order",
+        "lokasi": "KAB. SLEMAN",
+        "terjual": 0,
+        "gambar": "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+        "nama": "Smart TV Samsung 43 Inch 4K UHD",
+        "harga": "Rp 4.500.000,00",
+        "label": "Barang",
+        "lokasi": "KOTA YOGYAKARTA",
+        "terjual": 25,
+        "gambar": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+        "nama": "Microwave Sharp 20 Liter",
+        "harga": "Rp 950.000,00",
+        "label": "Barang",
+        "lokasi": "KOTA BANTUL",
+        "terjual": 5,
+        "gambar": "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    }
 ]
 
-# 5. Logika Filter Pencarian
-filtered = produk_list
-if kategori_pilih != "Semua":
-    filtered = [p for p in filtered if p['kategori'] == kategori_pilih]
-if keyword:
-    filtered = [p for p in filtered if keyword.lower() in p['nama'].lower() or keyword.lower() in p['deskripsi'].lower()]
+# 6. Membuat Layout Grid (5 Kolom seperti Inaproc)
+cols = st.columns(5)
 
-# 6. Tampilan Grid (Membuat Kotak-kotak Produk / Card ala Katalog Web)
-st.subheader(f"Daftar Produk ({len(filtered)} ditemukan)")
+# 7. Menyisipkan HTML & CSS untuk membuat Kartu (Card) yang rapi
+for i, p in enumerate(produk):
+    with cols[i % 5]:
+        # Desain Card HTML
+        card_html = f"""
+        <div style="
+            border: 1px solid #e0e0e0; 
+            border-radius: 8px; 
+            padding: 15px; 
+            background-color: white; 
+            height: 380px; 
+            display: flex; 
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        ">
+            <!-- Label -->
+            <div style="margin-bottom: 10px;">
+                <span style="background-color: #e3f2fd; color: #1976d2; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 11px;">
+                    {p['label']}
+                </span>
+            </div>
+            
+            <!-- Area Gambar -->
+            <div style="height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 15px;">
+                <img src="{p['gambar']}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+            </div>
+            
+            <!-- Judul Produk -->
+            <div style="font-weight: 600; font-size: 14px; line-height: 1.3; color: #333; margin-bottom: 10px; flex-grow: 1;">
+                {p['nama']}
+            </div>
+            
+            <!-- Harga -->
+            <div style="font-weight: 800; font-size: 16px; color: #2c3e50; margin-bottom: 10px;">
+                {p['harga']}
+            </div>
+            
+            <!-- Info Lokasi & Terjual -->
+            <div style="font-size: 11px; color: #7f8c8d; border-top: 1px solid #eee; padding-top: 8px;">
+                📍 {p['lokasi']}<br>
+                Terjual {p['terjual']}
+            </div>
+        </div>
+        <br>
+        """
+        # Menampilkan Card
+        st.markdown(card_html, unsafe_allow_html=True)
+        
+        # Tombol interaktif (Streamlit native) di bawah setiap card
+        if st.button("Lihat Detail", key=f"btn_{i}", use_container_width=True):
+            st.success(f"Masuk ke halaman detail {p['nama']}")import streamlit as st
 
-if not filtered:
-    st.warning("Produk yang Anda cari tidak ditemukan.")
-else:
-    # Membuat 3 kolom menyamping agar tampak seperti web portal profesional
-    cols = st.columns(3)
-    
-    for index, p in enumerate(filtered):
-        col = cols[index % 3] # Membagi item ke 3 kolom secara bergantian
-        with col:
-            # Menggunakan kontainer dengan border agar mirip "card" produk
-            with st.container(border=True):
-                st.markdown(f"<h2 style='text-align: center; margin: 0;'>{p['gambar']}</h2>", unsafe_allow_html=True)
-                st.markdown(f"### **{p['nama']}**")
-                st.caption(f"Kategori: {p['kategori']}")
-                st.write(f"**{p['harga']}**")
-                st.write(p['deskripsi'])
-                
-                # Tombol Aksi WhatsApp
-                no_wa = "6281234567890" # Ganti nanti dengan nomor WA Anda
-                pesan = f"Halo, saya tertarik dengan produk {p['nama']} ({p['harga']}) di katalog web."
-                link_wa = f"https://wa.me/{no_wa}?text={pesan.replace(' ', '%20')}"
-                
-                st.markdown(f"[📥 Pesan via WhatsApp]({link_wa})", unsafe_allow_html=True)
+# 1. Konfigurasi Halaman (Lebar penuh / Wide)
+st.set_page_config(page_title="Katalog Atakrib", layout="wide")
 
-# Footer sederhana
-st.markdown("---")
-st.caption("© 2026 Atakrib Elektronik Jogja • Dikembangkan secara mandiri untuk kemudahan layanan konsumen.")
+# 2. Menyembunyikan menu bawaan Streamlit agar terlihat seperti web asli
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
+# 3. Header & Kolom Pencarian (Meniru bagian atas Inaproc)
+st.markdown("### ⚡ Katalog Elektronik Atakrib")
+cari = st.text_input("🔍 Cari produk & penyedia di sini...", placeholder="Ketik nama barang...")
+
+# 4. Banner (Menggunakan gambar placeholder sebagai contoh)
+st.image("https://images.unsplash.com/photo-1550009158-9a4f6f466bba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80", use_column_width=True)
+
+st.markdown("#### Produk Pilihan & Terlaris di Jogja")
+st.write("") # Spasi kosong
+
+# 5. Data Produk (Menggunakan gambar URL asli agar terlihat nyata)
+produk = [
+    {
+        "nama": "Kulkas 2 Pintu LG Smart Inverter",
+        "harga": "Rp 3.850.000,00",
+        "label": "Barang",
+        "lokasi": "KOTA YOGYAKARTA",
+        "terjual": 12,
+        "gambar": "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+        "nama": "AC Daikin Standard 1 PK",
+        "harga": "Rp 4.100.000,00",
+        "label": "Barang",
+        "lokasi": "KOTA YOGYAKARTA",
+        "terjual": 8,
+        "gambar": "https://images.unsplash.com/photo-1618220179428-22790b46a0eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+        "nama": "Mesin Cuci Samsung Top Load 9kg",
+        "harga": "Rp 2.950.000,00",
+        "label": "Pre Order",
+        "lokasi": "KAB. SLEMAN",
+        "terjual": 0,
+        "gambar": "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+        "nama": "Smart TV Samsung 43 Inch 4K UHD",
+        "harga": "Rp 4.500.000,00",
+        "label": "Barang",
+        "lokasi": "KOTA YOGYAKARTA",
+        "terjual": 25,
+        "gambar": "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+        "nama": "Microwave Sharp 20 Liter",
+        "harga": "Rp 950.000,00",
+        "label": "Barang",
+        "lokasi": "KOTA BANTUL",
+        "terjual": 5,
+        "gambar": "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+    }
+]
+
+# 6. Membuat Layout Grid (5 Kolom seperti Inaproc)
+cols = st.columns(5)
+
+# 7. Menyisipkan HTML & CSS untuk membuat Kartu (Card) yang rapi
+for i, p in enumerate(produk):
+    with cols[i % 5]:
+        # Desain Card HTML
+        card_html = f"""
+        <div style="
+            border: 1px solid #e0e0e0; 
+            border-radius: 8px; 
+            padding: 15px; 
+            background-color: white; 
+            height: 380px; 
+            display: flex; 
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        ">
+            <!-- Label -->
+            <div style="margin-bottom: 10px;">
+                <span style="background-color: #e3f2fd; color: #1976d2; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 11px;">
+                    {p['label']}
+                </span>
+            </div>
+            
+            <!-- Area Gambar -->
+            <div style="height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 15px;">
+                <img src="{p['gambar']}" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+            </div>
+            
+            <!-- Judul Produk -->
+            <div style="font-weight: 600; font-size: 14px; line-height: 1.3; color: #333; margin-bottom: 10px; flex-grow: 1;">
+                {p['nama']}
+            </div>
+            
+            <!-- Harga -->
+            <div style="font-weight: 800; font-size: 16px; color: #2c3e50; margin-bottom: 10px;">
+                {p['harga']}
+            </div>
+            
+            <!-- Info Lokasi & Terjual -->
+            <div style="font-size: 11px; color: #7f8c8d; border-top: 1px solid #eee; padding-top: 8px;">
+                📍 {p['lokasi']}<br>
+                Terjual {p['terjual']}
+            </div>
+        </div>
+        <br>
+        """
+        # Menampilkan Card
+        st.markdown(card_html, unsafe_allow_html=True)
+        
+        # Tombol interaktif (Streamlit native) di bawah setiap card
+        if st.button("Lihat Detail", key=f"btn_{i}", use_container_width=True):
+            st.success(f"Masuk ke halaman detail {p['nama']}")
