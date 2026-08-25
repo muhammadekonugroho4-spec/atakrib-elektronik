@@ -1,80 +1,66 @@
 import streamlit as st
 
-# Konfigurasi Halaman Web
+# 1. Konfigurasi Halaman (Lebar penuh agar mirip web portal profesional)
 st.set_page_config(
-    page_title="Atakrib Elektronik Jogja", 
+    page_title="Katalog Elektronik Atakrib Jogja", 
     page_icon="⚡", 
-    layout="centered"
+    layout="wide"
 )
 
-# Judul Utama
-st.title("⚡ Atakrib Elektronik - Katalog & Asisten")
-st.write("Temukan produk elektronik pilihan terbaik untuk wilayah Jogja. Konsultasi langsung via WhatsApp!")
+# 2. Header & Banner Sederhana
+st.title("⚡ Katalog Resmi Atakrib Elektronik Jogja")
+st.markdown("Direktori produk elektronik pilihan terbaik, transparan, dan terpercaya di Yogyakarta.")
+st.markdown("---")
 
-# Sidebar untuk Filter Kategori
-st.sidebar.header("Filter Produk")
-kategori = st.sidebar.selectbox("Pilih Kategori:", ["Semua", "AC", "Mesin Cuci", "Televisi", "Kulkas"])
+# 3. Sidebar untuk Filter & Pencarian Utama
+st.sidebar.header("🔍 Filter Katalog")
+keyword = st.sidebar.text_input("Cari nama produk...")
+kategori_pilih = st.sidebar.selectbox("Pilih Kategori:", ["Semua", "AC", "Mesin Cuci", "Televisi", "Kulkas"])
 
-# Data Produk Sementara (Nanti bisa diperbarui sesuai barang asli di toko)
+# 4. Database Contoh Produk (Nanti bisa ditambah banyak)
 produk_list = [
-    {
-        "nama": "Smart TV 43 Inch Android", 
-        "kategori": "Televisi", 
-        "harga": "Rp 3.500.000", 
-        "deskripsi": "Resolusi 4K tajam, suara jernih, garansi resmi.", 
-        "gambar": "📺"
-    },
-    {
-        "nama": "Mesin Cuci 2 Tabung 8kg", 
-        "kategori": "Mesin Cuci", 
-        "harga": "Rp 1.800.000", 
-        "deskripsi": "Hemat listrik, tabung besar anti karat, awet.", 
-        "gambar": "🌀"
-    },
-    {
-        "nama": "AC Standard 1/2 PK", 
-        "kategori": "AC", 
-        "harga": "Rp 2.900.000", 
-        "deskripsi": "Dingin cepat, freon ramah lingkungan, cocok untuk kamar.", 
-        "gambar": "❄️"
-    },
-    {
-        "nama": "Kulkas 2 Pintu Inverter", 
-        "kategori": "Kulkas", 
-        "harga": "Rp 3.800.000", 
-        "deskripsi": "Hemat energi, bebas bunga es (no frost), kapasitas luas.", 
-        "gambar": "🧊"
-    }
+    {"nama": "Smart TV 43 Inch Android", "kategori": "Televisi", "harga": "Rp 3.500.000", "deskripsi": "Resolusi 4K tajam, suara jernih, garansi resmi.", "gambar": "📺"},
+    {"nama": "Mesin Cuci 2 Tabung 8kg", "kategori": "Mesin Cuci", "harga": "Rp 1.800.000", "deskripsi": "Hemat listrik, tabung besar anti karat, awet.", "gambar": "🌀"},
+    {"nama": "AC Standard 1/2 PK", "kategori": "AC", "harga": "Rp 2.900.000", "deskripsi": "Dingin cepat, freon ramah lingkungan, cocok untuk kamar.", "gambar": "❄️"},
+    {"nama": "Kulkas 2 Pintu Inverter", "kategori": "Kulkas", "harga": "Rp 3.800.000", "deskripsi": "Hemat energi, bebas bunga es (no frost), kapasitas luas.", "gambar": "🧊"},
+    {"nama": "Smart TV 32 Inch", "kategori": "Televisi", "harga": "Rp 2.100.000", "deskripsi": "HD Ready, built-in YouTube & Netflix, hemat daya.", "gambar": "📺"},
+    {"nama": "Mesin Cuci Front Loading 7kg", "kategori": "Mesin Cuci", "harga": "Rp 4.500.000", "deskripsi": "Pencucian dengan air panas,, pakaian lebih terjaga.", "gambar": "🌀"}
 ]
 
-# Filter produk berdasarkan pilihan kategori
-if kategori == "Semua":
-    filtered_products = produk_list
+# 5. Logika Filter Pencarian
+filtered = produk_list
+if kategori_pilih != "Semua":
+    filtered = [p for p in filtered if p['kategori'] == kategori_pilih]
+if keyword:
+    filtered = [p for p in filtered if keyword.lower() in p['nama'].lower() or keyword.lower() in p['deskripsi'].lower()]
+
+# 6. Tampilan Grid (Membuat Kotak-kotak Produk / Card ala Katalog Web)
+st.subheader(f"Daftar Produk ({len(filtered)} ditemukan)")
+
+if not filtered:
+    st.warning("Produk yang Anda cari tidak ditemukan.")
 else:
-    filtered_products = [p for p in produk_list if p['kategori'] == kategori]
+    # Membuat 3 kolom menyamping agar tampak seperti web portal profesional
+    cols = st.columns(3)
+    
+    for index, p in enumerate(filtered):
+        col = cols[index % 3] # Membagi item ke 3 kolom secara bergantian
+        with col:
+            # Menggunakan kontainer dengan border agar mirip "card" produk
+            with st.container(border=True):
+                st.markdown(f"<h2 style='text-align: center; margin: 0;'>{p['gambar']}</h2>", unsafe_allow_html=True)
+                st.markdown(f"### **{p['nama']}**")
+                st.caption(f"Kategori: {p['kategori']}")
+                st.write(f"**{p['harga']}**")
+                st.write(p['deskripsi'])
+                
+                # Tombol Aksi WhatsApp
+                no_wa = "6281234567890" # Ganti nanti dengan nomor WA Anda
+                pesan = f"Halo, saya tertarik dengan produk {p['nama']} ({p['harga']}) di katalog web."
+                link_wa = f"https://wa.me/{no_wa}?text={pesan.replace(' ', '%20')}"
+                
+                st.markdown(f"[📥 Pesan via WhatsApp]({link_wa})", unsafe_allow_html=True)
 
-# Tampilkan Daftar Produk dalam Card
-st.header("📦 Katalog Pilihan")
-for p in filtered_products:
-    with st.container():
-        col1, col2 = st.columns([1, 3])
-        with col1:
-            st.markdown(f"<h1 style='text-align: center;'>{p['gambar']}</h1>", unsafe_allow_html=True)
-        with col2:
-            st.subheader(p['nama'])
-            st.write(f"**Harga Estimasi:** {p['harga']}")
-            st.write(p['deskripsi'])
-            
-            # Tombol Pesan via WhatsApp (Ganti nomor di bawah nanti dengan nomor WA Anda, format: 628xxxxxxxxxx)
-            no_wa = "6281234567890" 
-            pesan = f"Halo, saya tertarik dengan produk {p['nama']} ({p['harga']}) yang ada di web katalog Atakrib."
-            link_wa = f"https://wa.me/{no_wa}?text={pesan.replace(' ', '%20')}"
-            
-            st.markdown(f"[📥 Pesan / Tanya via WhatsApp]({link_wa})", unsafe_allow_html=True)
-        st.divider()
-
-# Fitur Kotak Tanya Sederhana
-st.subheader("🤖 Tanya Asisten Elektronik")
-user_query = st.text_input("Bingung pilih barang? Ketik di sini (Cth: 'Cari AC hemat listrik untuk kamar 3x3'):")
-if user_query:
-    st.info(f"Asisten: Untuk pertanyaan '{user_query}', kami menyarankan produk AC Standard 1/2 PK atau kunjungi toko kami untuk konsultasi langsung.")
+# Footer sederhana
+st.markdown("---")
+st.caption("© 2026 Atakrib Elektronik Jogja • Dikembangkan secara mandiri untuk kemudahan layanan konsumen.")
