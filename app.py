@@ -18,7 +18,7 @@ st.markdown("### ⚡ Katalog Elektronik Atakrib")
 cari = st.text_input("🔍 Cari produk & penyedia di sini...", placeholder="Ketik nama barang...")
 
 # 4. Banner (Menggunakan gambar placeholder sebagai contoh)
-st.image("https://images.unsplash.com/photo-1550009158-9a4f6f466bba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80", use_column_width=True)
+st.image("https://images.unsplash.com/photo-1550009158-9a4f6f466bba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80", use_container_width=True)
 
 st.markdown("#### Produk Pilihan & Terlaris di Jogja")
 st.write("") # Spasi kosong
